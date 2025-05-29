@@ -63,6 +63,6 @@ ollama pull llama3.2:3b
 ```
 **Then run the chatbot:**
 ```bash
-streamlit run chatbot.py
+streamlit run llama/chatbot.py
 ```
 The app will be available at: http://localhost:8501
