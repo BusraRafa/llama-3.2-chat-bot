@@ -19,6 +19,11 @@ An interactive chatbot UI powered by **LLaMA 3.2**, built using **Streamlit** an
 
 ## Python Dependencies
 
+### 1. Clone the Repository
+```bash
+git clone https://github.com/BusraRafa/llama-3.2-chat-bot.git
+cd llama-3.2-chat-bot
+```
 **Install dependencies with:**
    ```bash
    pip install -r requirements.txt
@@ -29,6 +34,7 @@ streamlit
 langchain
 langchain_openai
 langchain_core
+langchain_ollama
 langchain_community
 python-dotenv
 ```
@@ -63,6 +69,6 @@ ollama pull llama3.2:3b
 ```
 **Then run the chatbot:**
 ```bash
-streamlit run llama/chatbot.py
+streamlit run lama/chatbot.py
 ```
 The app will be available at: http://localhost:8501
