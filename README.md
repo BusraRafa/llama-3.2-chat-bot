@@ -24,7 +24,12 @@ An interactive chatbot UI powered by **LLaMA 3.2**, built using **Streamlit** an
 git clone https://github.com/BusraRafa/llama-3.2-chat-bot.git
 cd llama-3.2-chat-bot
 ```
-**Install dependencies with:**
+### 2. Create a Virtual Environment (optional but recommended)
+```bash
+python -m venv myenv
+myenv\Scripts\activate.bat
+```
+**Install dependencies in the project folder with:**
    ```bash
    pip install -r requirements.txt
 ```
