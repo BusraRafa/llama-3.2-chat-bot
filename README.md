@@ -27,7 +27,7 @@ cd llama-3.2-chat-bot
 ### 2. Create a Virtual Environment (optional but recommended)
 ```bash
 python -m venv myenv
-myenv\Scripts\activate.bat
+myenv\Scripts\activate   #For windows
 ```
 **Install dependencies in the project folder with:**
    ```bash
