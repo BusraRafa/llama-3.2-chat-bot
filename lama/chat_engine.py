@@ -3,43 +3,63 @@ from langchain_ollama import ChatOllama
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
-# Import user profiles from separate file
-from mock_users import USER_PROFILES
+# Simulated user profiles (normally comes from backend)
+from mock_users import USER_PROFILES  # Your mock user file
 
-st.set_page_config(page_title="Sports ChatBot", layout="centered")
-st.title("🏟️ Personalized Sports ChatBot")
+st.set_page_config(page_title="Personalized Sports Chatbot", layout="centered")
+st.title("🏅 Personalized Sports Chatbot")
 
-# Select user (simulate login)
-selected_user = st.selectbox("Select user", list(USER_PROFILES.keys()), format_func=lambda x: USER_PROFILES[x]["username"])
+# --- Simulate login ---
+selected_user = st.selectbox(
+    "Select user",
+    list(USER_PROFILES.keys()),
+    format_func=lambda key: USER_PROFILES[key]["username"]
+)
 
 user_profile = USER_PROFILES[selected_user]
-about_text = user_profile["details"]
+about_summary = f"""
+You are a concise, smart, and context-aware assistant who gives sharp, relevant replies only.
 
+This user is a sports coach. They specialize in: **{user_profile['sport']}**.
+
+Here’s what the user said about themselves:
+---
+{user_profile['details']}
+---
+Use this info to personalize your tone, advice, examples, and especially team-specific responses.
+If they ask about "my team", infer from the text above.
+
+Do not give general explanations. Focus only on what they ask.
+Keep answers short and inline unless explicitly asked for depth.
+"""
+
+# --- Session memory per user ---
 if "user_memory" not in st.session_state:
     st.session_state.user_memory = {}
 if selected_user not in st.session_state.user_memory:
     st.session_state.user_memory[selected_user] = []
 
-model = ChatOllama(model="llama3.2:3b", base_url="http://localhost:11434")
+# --- LangChain setup ---
+llm = ChatOllama(model="llama3.2:3b", base_url="http://localhost:11434")
 output_parser = StrOutputParser()
 
-def generate_response(user_history):
-    messages = [
-        ("system", f"You are a sports coaching assistant specializing in {user_profile['sport']}. Personalize your replies based on the user's details: {about_text}")
-    ] + [(msg["role"], msg["content"]) for msg in user_history]
+def generate_response(messages):
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", about_summary)
+    ] + [(msg["role"], msg["content"]) for msg in messages])
     
-    chain = ChatPromptTemplate.from_messages(messages) | model | output_parser
+    chain = prompt | llm | output_parser
     return chain.invoke({})
 
+# --- Display message history ---
 for msg in st.session_state.user_memory[selected_user]:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-if prompt := st.chat_input("Ask about coaching, tactics, or your favorite team..."):
+# --- Input & reply ---
+if prompt := st.chat_input("Ask your question..."):
+    st.chat_message("user").markdown(prompt)
     st.session_state.user_memory[selected_user].append({"role": "user", "content": prompt})
-
-    with st.chat_message("user"):
-        st.markdown(prompt)
 
     with st.chat_message("assistant"), st.spinner("Thinking..."):
         response = generate_response(st.session_state.user_memory[selected_user])
